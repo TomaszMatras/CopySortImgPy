@@ -221,7 +221,7 @@ def extent(file):
 
 end = 'a'   
 #crawler     
-for root, dirs, files in os.walk(dEst):
+for root, dirs, files in os.walk(dIr):
 #    print("\n ********************* \n size: " + str(len(files)))
  #   print(" root: " + str(root) + " dirs: " + str(dirs) + "files: "+ str(files) + '\n \n *********************')
     for filename in files:
@@ -242,7 +242,7 @@ for root, dirs, files in os.walk(dEst):
 hashes = {}
 delete = []
 # Iterate through all files in the directory
-for root, dirs, files in os.walk(dIr):
+for root, dirs, files in os.walk(dEst):
     for file in files:
         # Get the full path of the file
         full_path = os.path.join(root, file)

@@ -266,4 +266,4 @@ for root, dirs, files in os.walk(dIr):
 #print(delete)
 for file in delete:
     os.remove(file)
-   # print("removed shit:", shit)#
+  

@@ -4,9 +4,10 @@ import os
 import shutil
 import datetime
 from pathlib import Path
+import hashlib
 # sciezka z kąd i dokąd
-DIR = 'E:\\tempPhone'
-DEST = 'E:\\zdjecia'
+dIr = 'E:\\tempPhone'
+dEst = 'E:\\zdjecia'
 
 ImgArr = [
 	"ase",
@@ -183,33 +184,24 @@ def renameFile(cTime, file , add):
 def moveFile(file, name, ctime, end):
     year = ctime.strftime('%G')
     month = ctime.strftime('%B')
-    dest = os.path.join(DEST, year , month, end)
-#    print("dest:" + str(dest))
+    dest = os.path.join(dEst, year , month, end)
     if os.path.exists(dest):
         pass
     else:
         os.makedirs(dest)
-    dest = os.path.join(DEST, year , month, end, name)
+    dest = os.path.join(dEst, year , month, end, name)
     j = 0
     while os.path.exists(dest):
           j += 1
           name =  renameFile(ctime, file, j)
-          dest = os.path.join(DEST, year , month, end, name)
-        #  print("destI:" + str(dest))
-         
-   # print("dest2:" + str(dest))
-    shutil.copy(file, dest) #skopjuj zmień nazwe
+          dest = os.path.join(dEst, year , month, end, name)
+    shutil.copy(file, dest)
   
         
         
 #extract metadanych
 #zwróci fatetime    
 def meta(file):
- #   time = os.path.getctime(file)
- #   date = datetime.fromtimestamp(time)
-#     file_stats = os.stat(file)
-  #   print(file_stats)
-  #   date = datetime.datetime.fromtimestamp(file_stats.st_ctime)
 
   file = Path(file)
   print(file.stat())
@@ -229,19 +221,49 @@ def extent(file):
 
 end = 'a'   
 #crawler     
-for root, dirs, files in os.walk(DIR):
-    print("\n ********************* \n size: " + str(len(files)))
-    print(" root: " + str(root) + " dirs: " + str(dirs) + "files: "+ str(files) + '\n \n *********************')
+for root, dirs, files in os.walk(dEst):
+#    print("\n ********************* \n size: " + str(len(files)))
+ #   print(" root: " + str(root) + " dirs: " + str(dirs) + "files: "+ str(files) + '\n \n *********************')
     for filename in files:
       #weź tylko jpg
-      print(str(os.path.join(root, filename)))
+  #    print(str(os.path.join(root, filename)))
       filepath = os.path.join(root, filename)
       if os.path.isfile(filepath):
           end = extent(filepath)
-          print(end)
+   #       print(end)
           date = meta(filepath)
-          print(date)
+   #       print(date)
           name = renameFile(date, filepath, " ")
-          print(name)
+    #      print(name)
           moveFile(filepath, name, date, end)
-          print('---------------------------------------------')
+    #      print('---------------------------------------------')
+  
+#usuń duplikaty    
+hashes = {}
+delete = []
+# Iterate through all files in the directory
+for root, dirs, files in os.walk(dIr):
+    for file in files:
+        # Get the full path of the file
+        full_path = os.path.join(root, file)
+       
+    
+        # Open the file in read-binary mode
+        with open(full_path, 'rb') as f:
+            # Calculate the SHA-1 hash of the file
+            file_hash = hashlib.sha1(f.read()).hexdigest()
+
+         
+            if file_hash in hashes:
+            
+                 delete.append(full_path)     
+       #          print("added duplicate image:", full_path)
+            else:
+                # If the file is not in the dictionary, add it
+                hashes[file_hash] = full_path
+
+# Call the function with the path to the directory containing the images
+#print(delete)
+for file in delete:
+    os.remove(file)
+   # print("removed shit:", shit)#
